@@ -1,19 +1,30 @@
-import requests
+from datetime import date
 import time
 import math
+import os
 
-STOCKS = ['GME', 'AMC']
+import requests
+
 ENDPOINT = 'https://query1.finance.yahoo.com/v7/finance/download/{symbol}?period1={start}&period2={end}&interval={interval}&events={events}&includeAdjustedClose=true'
+OUTPUT_DIR = '../raw-data/'
 
-for stock in STOCKS:
+os.makedirs(OUTPUT_DIR, exist_ok=True) # Ensure output directory is created
+SYMBOLS = open('top-500.txt') # Open symbol list
+
+for symbol in SYMBOLS:
+    symbol = symbol.strip()
     today = math.floor(time.time())
     url = ENDPOINT.format(
-        symbol=stock, start=0, end=today, interval='1d', events='historical'
+        symbol=symbol, start=0, end=today, interval='1d', events='historical'
     )
+    print('Attempting to load stock {}...'.format(symbol))
+    print('URL: {}'.format(url))
 
     response = requests.get(url)
-    raw_data = response.text.split('\n')
+    if response.status_code != 200:
+        print('Rate limit hit!')
+        break
 
-    for i in range(0, len(raw_data)):
-        row = raw_data[i].split(',')
-        print(row)
+    raw_data = response.text
+    output = open(OUTPUT_DIR + '{}-{}.csv'.format(symbol, date.today().isoformat()), 'w')
+    output.write(raw_data)
