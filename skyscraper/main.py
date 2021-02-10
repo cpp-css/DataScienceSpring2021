@@ -9,11 +9,12 @@ ENDPOINT = 'https://query1.finance.yahoo.com/v7/finance/download/{symbol}?period
 OUTPUT_DIR = '../raw-data/'
 
 os.makedirs(OUTPUT_DIR, exist_ok=True) # Ensure output directory is created
-SYMBOLS = open('top-500.txt') # Open symbol list
+SYMBOLS = open('targets.txt') # Open symbol list
+
+today = math.floor(time.time())
 
 for symbol in SYMBOLS:
     symbol = symbol.strip()
-    today = math.floor(time.time())
     url = ENDPOINT.format(
         symbol=symbol, start=0, end=today, interval='1d', events='historical'
     )
