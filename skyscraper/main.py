@@ -1,7 +1,7 @@
-from datetime import date
 import time
 import math
 import os
+from mongo_db import fill_database
 
 import requests
 
@@ -20,7 +20,8 @@ for symbol in SYMBOLS:
     )
     print('Attempting to load stock {}...'.format(symbol))
     print('URL: {}'.format(url))
-
+    response = requests.get(url)
+    fill_database(response, symbol)
     response = requests.get(url)
     if response.status_code != 200:
         print('Rate limit hit!')
