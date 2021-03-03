@@ -35,12 +35,29 @@ def upload_stock(symbol):
 
     return True
 
+def download_stock(symbol):
+    try:
+        response = s3.download_file(
+            BUCKET_NAME,
+            '{symbol}.csv'.format(symbol=symbol),
+            '{raw_dir}/{symbol}.csv'.format(raw_dir=RAW_DIR, symbol=symbol)
+        )
+    except ClientError as e:
+        print(e)
+        return False
+
+    return True
+
 
 if args.command == 'upload':
     for symbol in SYMBOLS:
-        print('Uploading {}'.format(symbol.strip()))
+        print('Uploading {}...'.format(symbol.strip()))
         result = upload_stock(symbol.strip())
         if result == False:
             break
 elif args.command == 'download':
-    print('Unsupported atm - check back later')
+    for symbol in SYMBOLS:
+        print('Downloading {}...'.format(symbol.strip()))
+        result = download_stock(symbol.strip())
+        if result == False:
+            break
