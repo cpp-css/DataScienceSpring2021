@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 load_dotenv(dotenv_path='../.env')
 
 RAW_DIR = '../raw-data'
-BUCKET_NAME = 'dss2021'
+BUCKET_NAME = 'csspi-dss21'
 SYMBOLS = open('../targets.txt') # Open symbol list
 
 s3 = boto3.client('s3',
